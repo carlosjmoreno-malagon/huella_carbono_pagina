@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -118,7 +121,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+cloudinary.config(
+  cloud_name = 'your_cloud_name',
+  api_key = 'your_api_key',
+  api_secret = 'your_api_secret'
+)
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -146,3 +153,4 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

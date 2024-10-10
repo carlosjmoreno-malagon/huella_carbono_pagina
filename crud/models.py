@@ -7,4 +7,4 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'crud_project'  # Especificar el nombre de la tabla si es necesario
+        db_table = 'crud_project' 
