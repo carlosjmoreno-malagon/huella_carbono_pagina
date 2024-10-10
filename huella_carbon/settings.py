@@ -25,7 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
-
+CLOUDINARY_API_KEY = os.environ.get('API_KEY', default='your secret key')
+CLOUDINARY_API_SECRET= os.environ.get('API_SECRET', default='your secret key')
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUD_NAME', default='your secret key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 DEBUG = 'RENDER' not in os.environ
@@ -122,9 +124,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 cloudinary.config(
-  cloud_name = 'your_cloud_name',
-  api_key = 'your_api_key',
-  api_secret = 'your_api_secret'
+  cloud_name = CLOUDINARY_CLOUD_NAME,
+  api_key = CLOUDINARY_API_KEY,
+  api_secret = CLOUDINARY_API_SECRET
 )
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
