@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
-CLOUDINARY_API_KEY = os.environ.get('API_KEY', default='your secret key')
-CLOUDINARY_API_SECRET= os.environ.get('API_SECRET', default='your secret key')
-CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUD_NAME', default='your secret key')
+CLOUDINARY_API_KEY = os.environ.get('API_KEY', default='your API_key')
+CLOUDINARY_API_SECRET= os.environ.get('API_SECRET', default='your API_secret key')
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUD_NAME', default='your CLOUD_NAME key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 DEBUG = 'RENDER' not in os.environ
