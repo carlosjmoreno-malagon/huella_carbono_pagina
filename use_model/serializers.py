@@ -1,0 +1,21 @@
+from rest_framework import serializers
+
+class PrediccionesSerializers(serializers.Serializer):
+    Body_type = serializers.CharField()
+    Diet = serializers.CharField()
+    How_Often_Shower = serializers.CharField()
+    Heating_Energy_Source = serializers.CharField()
+    Transport= serializers.CharField()
+    Vehicle_Type = serializers.CharField()
+    Social_Activity = serializers.CharField()
+    Frequency_of_Traveling_by_Air = serializers.CharField()
+    Waste_Bag_Size = serializers.CharField()
+    Energy_efficiency = serializers.CharField()
+    Recycling= serializers.CharField()
+    Cooking_With = serializers.CharField()
+    Monthly_Grocery_Bill = serializers.CharField()
+    Vehicle_Monthly_DistanceKm = serializers.CharField()
+    Waste_Bag_Weekly_Count= serializers.CharField()
+    How_Long_TV_PC_Daily_Hour = serializers.CharField()
+    How_Many_New_Clothes_Monthly = serializers.CharField()
+    How_Long_Internet_Daily_Hour = serializers.CharField()

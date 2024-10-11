@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('crud.urls')),
     path('',include('my_auth.urls')),
+    path('',include('use_model.urls')),
 
 ]
 

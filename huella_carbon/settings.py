@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'crud',
     'my_auth',
     'rest_framework',
+    'use_model',
     
 ]
 REST_FRAMEWORK = {
