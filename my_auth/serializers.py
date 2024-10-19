@@ -33,15 +33,42 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         else:
             Profile.objects.create(user=user)
         return user
-    
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
 
-        # Custom claims (si necesitas agregar alguna información adicional al token)
-        token['username'] = user.username
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(write_only=True, required=False)
 
-        return token
+    class Meta:
+        model = Profile
+        fields = ['profile_picture', 'city', 'country']
+
+    def update(self, instance, validated_data):
+        profile_picture = validated_data.pop('profile_picture', None)
+
+        if profile_picture:
+            upload_result = cloudinary.uploader.upload(profile_picture)
+            instance.profile_picture = upload_result.get('url')
+        
+        instance.city = validated_data.get('city', instance.city)
+        instance.country = validated_data.get('country', instance.country)
+        instance.save()
+
+        return instance
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(source='profile.profile_picture', read_only=True)
+    city = serializers.CharField(source='profile.city', read_only=True)
+    country = serializers.CharField(source='profile.country', read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'profile_picture', 'city', 'country']
