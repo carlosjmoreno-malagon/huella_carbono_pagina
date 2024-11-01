@@ -6,10 +6,11 @@ import cloudinary.uploader
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    profile_picture = serializers.ImageField(write_only=True,required = True)
+    profile_picture = serializers.ImageField(write_only=True, required=True)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2','profile_picture']
+        fields = ['username', 'email', 'password', 'password2', 'profile_picture']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -20,19 +21,25 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        profile_picture = validated_data.pop('profile_picture',None)
+        profile_picture = validated_data.pop('profile_picture', None)
+        
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password']
         )
+
+        # Check if the profile already exists
+        profile, created = Profile.objects.get_or_create(user=user)
+        
         if profile_picture:
             upload_result = cloudinary.uploader.upload(profile_picture)
-            profile_url = upload_result.get('url')
-            Profile.objects.create(user=user, profile_picture=profile_url)
-        else:
-            Profile.objects.create(user=user)
+            profile.profile_picture = upload_result.get('url')
+        
+        profile.save()  # Save the profile with the updated picture or unchanged
+        
         return user
+    
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
