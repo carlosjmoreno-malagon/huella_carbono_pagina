@@ -1,3 +1,4 @@
+import cloudinary
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ProfileUpdateSerializer, UserProfileUpdateSerializer, UserRegistrationSerializer
@@ -58,10 +59,9 @@ def Register(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
-    serializers = UserProfileSerializer(user)
+    serializer = UserProfileSerializer(user)
 
-    #return Response("tu estas logeado con: {}".format(request.user),status=status.HTTP_200_OK)
-    return Response(serializers.data,status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT','PATCH'])
@@ -69,25 +69,50 @@ def profile(request):
 @permission_classes([IsAuthenticated])
 def update_profile(request):
     user = request.user
+    data = request.data
+    
+    # Verificar si la imagen ha sido subida
+    profile_picture = request.FILES.get('profile_picture')
+    
+    if profile_picture:
+        if profile_picture.size == 0:
+            return Response({"error": "El archivo de imagen está vacío."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "No se recibió ningún archivo de imagen."}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
-        # Intentar obtener el perfil del usuario
+        # Intentar subir la imagen a Cloudinary
+        upload_result = cloudinary.uploader.upload(profile_picture)
+        image_url = upload_result.get('url')  # Obtener la URL de la imagen subida
+        print(f"Imagen subida con éxito: {image_url}")
+    except Exception as e:
+        return Response({"error": f"Error al subir la imagen a Cloudinary: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Intentar obtener el perfil del usuario
+    try:
         profile = user.profile
     except Profile.DoesNotExist:
         # Si no existe el perfil, crearlo
         profile = Profile.objects.create(user=user)
 
-    user_serializer = UserProfileUpdateSerializer(user, data=request.data, partial=True)
-    profile_serializer = ProfileUpdateSerializer(profile, data=request.data, partial=True)
+    # Actualizar la URL de la imagen de perfil
+    profile.profile_picture = image_url  # Asignar la URL de la imagen a la instancia del perfil
+    profile.city = data.get('city', profile.city)
+    profile.country = data.get('country', profile.country)
+    
+    # Guardar los cambios en el perfil
+    profile.save()
 
-    if user_serializer.is_valid() and profile_serializer.is_valid():
+    # Ahora actualizamos el usuario si es necesario
+    user_serializer = UserProfileUpdateSerializer(user, data=request.data, partial=True)
+    if user_serializer.is_valid():
         user_serializer.save()
-        profile_serializer.save()
-        return Response({
-            'user': user_serializer.data,
-            'profile': profile_serializer.data
-        }, status=status.HTTP_200_OK)
 
     return Response({
-        'user_errors': user_serializer.errors,
-        'profile_errors': profile_serializer.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
+        'user': user_serializer.data,
+        'profile': {
+            'profile_picture': profile.profile_picture,  # Devolver la URL de la imagen de perfil
+            'city': profile.city,
+            'country': profile.country
+        }
+    }, status=status.HTTP_200_OK)
