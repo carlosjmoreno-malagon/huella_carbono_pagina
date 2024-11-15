@@ -32,7 +32,7 @@ CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUD_NAME', default='your CLOUD_NAME ke
 DEBUG = True
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.29.1']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 

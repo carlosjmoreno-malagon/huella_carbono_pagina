@@ -5,7 +5,7 @@ from rest_framework import status
 from huella_carbon import settings
 from .serializers import PrediccionesSerializers
 import pandas as pd
-
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 import joblib
 model_path = os.path.join(settings.BASE_DIR, 'use_model', 'models', 'Boosting.joblib')
@@ -16,6 +16,7 @@ if os.path.exists(prepocesamiento_path):
     prepocesamiento = joblib.load(prepocesamiento_path)
 
 class PrediccionAIView(APIView):
+    @csrf_exempt
     def post(self,request,*args,**kwargs):
         serializer = PrediccionesSerializers(data = request.data)
 
